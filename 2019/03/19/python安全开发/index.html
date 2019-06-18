@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="技术类,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="对信任边界外数据做校验一、对信任边界外数据做校验一切用户输入的数据都是有害的，请对用户的数据做过滤，包括用户直接输入的，包括从数据库和文件中读取的数据，包括与第三方交互的数据，校验的目的就是过滤非法数据，使非法数据无法进入系统。校验的方式如下： ​    对于数字型，可以使用int强制转换，无法转换抛出异常都是异常数据，对于字符类型可使用正则表达式[a-zA-Z0-9_-]来正则匹配。 示例： 1">
+<meta name="keywords" content="技术类">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python 安全编程">
+<meta property="og:url" content="http://yoursite.com/2019/03/19/python安全开发/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="对信任边界外数据做校验一、对信任边界外数据做校验一切用户输入的数据都是有害的，请对用户的数据做过滤，包括用户直接输入的，包括从数据库和文件中读取的数据，包括与第三方交互的数据，校验的目的就是过滤非法数据，使非法数据无法进入系统。校验的方式如下： ​    对于数字型，可以使用int强制转换，无法转换抛出异常都是异常数据，对于字符类型可使用正则表达式[a-zA-Z0-9_-]来正则匹配。 示例： 1">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-03-27T06:37:18.215Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="python 安全编程">
+<meta name="twitter:description" content="对信任边界外数据做校验一、对信任边界外数据做校验一切用户输入的数据都是有害的，请对用户的数据做过滤，包括用户直接输入的，包括从数据库和文件中读取的数据，包括与第三方交互的数据，校验的目的就是过滤非法数据，使非法数据无法进入系统。校验的方式如下： ​    对于数字型，可以使用int强制转换，无法转换抛出异常都是异常数据，对于字符类型可使用正则表达式[a-zA-Z0-9_-]来正则匹配。 示例： 1">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/03/19/python安全开发/">
+
+
+
+
+
+  <title>python 安全编程 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/19/python安全开发/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">python 安全编程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-19T10:13:14+08:00">
+                2019-03-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="对信任边界外数据做校验"><a href="#对信任边界外数据做校验" class="headerlink" title="对信任边界外数据做校验"></a>对信任边界外数据做校验</h3><h3 id="一、对信任边界外数据做校验"><a href="#一、对信任边界外数据做校验" class="headerlink" title="一、对信任边界外数据做校验"></a>一、对信任边界外数据做校验</h3><p>一切用户输入的数据都是有害的，请对用户的数据做过滤，包括用户直接输入的，包括从数据库和文件中读取的数据，包括与第三方交互的数据，校验的目的就是过滤非法数据，使非法数据无法进入系统。校验的方式如下：</p>
+<p>​    对于数字型，可以使用int强制转换，无法转换抛出异常都是异常数据，对于字符类型可使用正则表达式[a-zA-Z0-9_-]来正则匹配。</p>
+<p>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">(request)</span>:</span></span><br><span class="line">	username = request.GET.get(<span class="string">'username'</span>)</span><br><span class="line">	<span class="keyword">if</span> username:</span><br><span class="line">		<span class="keyword">if</span> <span class="keyword">not</span> re.match(<span class="string">"^[a-zA-Z0-9_-]$"</span>, usename, re.I):</span><br><span class="line">		<span class="keyword">raise</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="二、防范XSS攻击"><a href="#二、防范XSS攻击" class="headerlink" title="二、防范XSS攻击"></a>二、防范XSS攻击</h3><p>​    XSS俗称跨站脚本攻击，是指攻击者通过”HTML注入”篡改网页，插入恶意脚本，从而在用户浏览网页时控制用户浏览器</p>
+<p>危害：获取用户浏览器的信息，如cookie</p>
+<p>分类：反射性XSS，存储型XSS，Dom Based XSS</p>
+<p>​    在Django编码中严禁直接拼接HttpReponse的返回内容，这种方式存在XSS风险。</p>
+<p>错误示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">save_calculate</span><span class="params">(request)</span>:</span></span><br><span class="line">    quote_group_id = request.POST.copy()[<span class="string">'quote_group_id'</span>]</span><br><span class="line"><span class="keyword">return</span> HttpResponse(<span class="string">'&lt;script&gt;location.href="offer/calculate'</span>+quote_group_id+<span class="string">'/&lt;/script&gt;'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>正确示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">save_calculate</span><span class="params">(request)</span>:</span></span><br><span class="line">    quote_group_id = int(request.POST.copy()[<span class="string">'quote_group_id'</span>])</span><br><span class="line">    <span class="keyword">return</span> HttpResponse(<span class="string">'&lt;script&gt;location.href="offer/calculate/'</span>+quote_group_id+<span class="string">'/&lt;/script&gt;'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>另外一个错误示例是在使用jinja2模板时出现的，jinja2模板默认情况下未启用转义，所以在编码的时候得手动加上。</p>
+<p>错误示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BuildImage</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="string">"""Generate image fro pdf"""</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, info, path)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> os.path.isdir(path):</span><br><span class="line">            os.mkdir(path)</span><br><span class="line">        self.info = info</span><br><span class="line">        self.path = path</span><br><span class="line">        self.pie_base_label = (</span><br><span class="line">            (<span class="string">"python"</span>, <span class="string">u"Python"</span>, <span class="number">0xda251d</span>),</span><br><span class="line">            (<span class="string">"java"</span>, <span class="string">u"JAVA"</span>, <span class="number">0xe77817</span>),</span><br><span class="line">            (<span class="string">"cplus"</span>, <span class="string">u"C++"</span>, <span class="number">0xf8c300</span>),</span><br><span class="line">            (<span class="string">"c"</span>, <span class="string">u"C语言"</span>, <span class="number">0x68b92e</span>)</span><br><span class="line">        )</span><br><span class="line">        self.image_path = &#123;&#125;</span><br><span class="line">        self.base_path = os.path.join(globalconf.project_dir, <span class="string">"static"</span>, <span class="string">"html"</span>)</span><br><span class="line">        self.static_path = os.path.join(globalconf.project_dir, <span class="string">"static"</span>)</span><br><span class="line"></span><br><span class="line">        self.env = Environment(loader=FileSystemLoader(self.base_path))</span><br><span class="line"></span><br><span class="line">        self.rol_template = self.env.get_template(<span class="string">"rol.html"</span>)</span><br><span class="line">        self.pie_template = self.env.get_template(<span class="string">"pie.html"</span>)</span><br><span class="line">        self.to_img_program_path = os.path.join(globalconf.project_dir, <span class="string">"static"</span>, <span class="string">"libs"</span>, <span class="string">"wkhtmltoimage"</span>)</span><br><span class="line">        self.pie_0_path = self.base_path + <span class="string">"/chart_dir/pie_0.png"</span></span><br></pre></td></tr></table></figure>
+
+<p>正确示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">self.env = Environment(loader=FileSystemLoader(self.base_path), autoescape=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="三、禁止关闭CSRF"><a href="#三、禁止关闭CSRF" class="headerlink" title="三、禁止关闭CSRF"></a>三、禁止关闭CSRF</h3><p>​    在Django中CSRF中间件是默认启用的，不论出于什么考虑都不允许关闭。</p>
+<h3 id="四、禁止使用os-system等拼接执行命令"><a href="#四、禁止使用os-system等拼接执行命令" class="headerlink" title="四、禁止使用os.system等拼接执行命令"></a>四、禁止使用os.system等拼接执行命令</h3><p>​    命令注入是指用户输入的参数被当作代码被shell解释器解释执行从而造成系统被控制等。举个简单的例子：</p>
+<p>原始url：<a href="http://sensitive/cgi-bin/userData.pl?doc=user1.txt" target="_blank" rel="noopener">http://sensitive/cgi-bin/userData.pl?doc=user1.txt</a></p>
+<p>修改之后：<a href="http://sensitive/cgi-bin/userData.pl?doc=user1.txt%3B/bin/ls" target="_blank" rel="noopener">http://sensitive/cgi-bin/userData.pl?doc=user1.txt%3B/bin/ls</a></p>
+<p>实际执行”cat user1.txt;/bin/ls”</p>
+<p>​    在Python编码中要杜绝os.system等os执行命令接口，要杜绝commands等系统命令接口，强制使用subprocess模块来执行命令。其他需要杜绝的接口如下：os.system,os.popen,os.spaw<em>,os.exec</em>,os.open,os.popen<em>,commands.call,commands.getoutput,Popen</em>，在使用使用subprocess模块时不能设置shell=True参数，如果设置的话一样存在命令注入的风险。因为subprocess模块在执行命令时会将命令和参数都分开，因此如果参数遭受到注入，则会报出参数错误的信息，而不会执行。</p>
+<p>错误示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">myserve</span><span class="params">(request, filename, dirname)</span>:</span></span><br><span class="line">    re = dict()</span><br><span class="line">    filestr=<span class="string">'authExport.dat'</span></span><br><span class="line">    re[<span class="string">'Content-Disposition'</span>] = <span class="string">'attachment; filename="'</span> + urlquote(filestr) +<span class="string">'"'</span></span><br><span class="line">    fullname=os.path.join(dirname,filename)</span><br><span class="line">    os.system(<span class="string">'sudo rm -f %s'</span>%fullname)</span><br><span class="line"><span class="keyword">return</span> re</span><br></pre></td></tr></table></figure>
+
+<p>在如上代码中，直接从request请求中获取参数再拼接传入os.system中执行命令，可导致命令注入。</p>
+<p>正确示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> shlex, subprocess </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>command_line = raw_input() </span><br><span class="line">/bin/vikings -input eggs.txt -output <span class="string">"spam spam.txt"</span> -cmd <span class="string">"echo '$MONEY'"</span> </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>args = shlex.split(command_line) <span class="comment"># args正确的分词 </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">print</span> args [<span class="string">'/bin/vikings'</span>, <span class="string">'-input'</span>, <span class="string">'eggs.txt'</span>, <span class="string">'-output'</span>, <span class="string">'spam spam.txt'</span>, <span class="string">'-cmd'</span>, <span class="string">"echo '$MONEY'"</span>] </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>p = subprocess.Popen(args)</span><br><span class="line"><span class="comment"># 替换shell 的管道 # output=`dmesg | grep hda` </span></span><br><span class="line">p1 = Popen([<span class="string">"dmesg"</span>], stdout=PIPE) </span><br><span class="line">p2 = Popen([<span class="string">"grep"</span>, <span class="string">"hda"</span>], stdin=p1.stdout, stdout=PIPE) <span class="comment"># Allow p1 to receive a SIGPIPE if p2 exits. </span></span><br><span class="line">p1.stdout.close() </span><br><span class="line">output = p2.communicate()[<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+
+<h3 id="五、禁止动态拼接SQL"><a href="#五、禁止动态拼接SQL" class="headerlink" title="五、禁止动态拼接SQL"></a>五、禁止动态拼接SQL</h3><p>​    SQL注入是指原始SQL查询被动态更改成一个与程序预期完全不同的查询。执行这样一个更改后的查询可能导致信息泄露或者数据被篡改。防止SQL注入的方式主要可以分为两类：</p>
+<p>1、采用ORM方式操作数据库</p>
+<p>2、参数化查询</p>
+<p>如上两种方式都是是一种简单有效的防止SQL注入的查询方式，如果不是特殊情况，强制使用如上两种方式。</p>
+<p>Sql注入的简单理解如下：</p>
+<p>原始sql：SELECT * FROM Users WHERE Username=’$username’ AND Password=’$password’</p>
+<p>用户提交参数：$username = 1‘ or ’1‘ = ’1；$password = 1’ or ‘1’ = ‘1</p>
+<p>执行sql：SELECT * FROM Users WHERE Username=’1’ OR ‘1’ = ‘1’ AND Password=’1’ OR ‘1’ = ‘1’</p>
+<p>错误示例：</p>
+<p>​    如果是使用django的api去操作数据库就应该不会有sql注入了，但是因为一些其他原因使用了拼接sql，就会有sql注入风险。下面贴一个有注入风险的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getUsers</span><span class="params">(user_id=None)</span>:</span></span><br><span class="line">    conn = psycopg2.connect(<span class="string">"dbname='××' user='××' host='' password=''"</span>)</span><br><span class="line">    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)</span><br><span class="line">    <span class="keyword">if</span> user_id==<span class="literal">None</span>:</span><br><span class="line">        str = <span class="string">'select distinct * from auth_user'</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        str=<span class="string">'select distinct * from auth_user where id=%s'</span>%user_id</span><br><span class="line">    res = cur.execute(str)</span><br><span class="line">    res = cur.fetchall()</span><br><span class="line">    conn.close()</span><br><span class="line">    <span class="keyword">return</span> res</span><br></pre></td></tr></table></figure>
+
+<p>像这种sql拼接就有sql注入问题，正常情况下应该使用django的ORM 接口，如果实在有这方面的需求，可以按照如下方式写。</p>
+<p>正确示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">user_contacts</span><span class="params">(request)</span>:</span></span><br><span class="line">  user = request.GET[<span class="string">'username'</span>]</span><br><span class="line">  sql = <span class="string">"SELECT * FROM user_contacts WHERE username = %s"</span></span><br><span class="line">  cursor = connection.cursor()</span><br><span class="line">  cursor.execute(sql, [user])</span><br><span class="line"><span class="comment"># do something with the results</span></span><br><span class="line">  results = cursor.fetchone()   <span class="comment">#or  results = cursor.fetchall()</span></span><br><span class="line">  cursor.close()</span><br></pre></td></tr></table></figure>
+
+<p>直接拼接的是万万不可的，如果采用ModelInstance.objects.raw(sql,[]),或者connection.objects.execute(sql,[])<br>,通过列表传进去的参数是没有注入风险的，因为Django在处理数据的时候会加上转义。</p>
+<p>更好的建议。采用ORM：</p>
+<blockquote>
+<p>&gt;&gt;&gt; Post.objects.create(author=me, title=’Sample title’, text=’Test’)</p>
+<p>&gt;&gt;&gt; from django.contrib.auth.models import User</p>
+<p>&gt;&gt;&gt; User.objects.all()</p>
+<p>&lt;QuerySet [&lt;User: ola&gt;]&gt;</p>
+<p>&gt;&gt;&gt;me = User.objects.get(username=’ola’)</p>
+</blockquote>
+<h3 id="六、禁止使用eval，pickle等危险代码执行接口"><a href="#六、禁止使用eval，pickle等危险代码执行接口" class="headerlink" title="六、禁止使用eval，pickle等危险代码执行接口"></a>六、禁止使用eval，pickle等危险代码执行接口</h3><p>​    使用eval可造成代码注入，从而造成系统被控制。存在同样问题的还有：</p>
+<blockquote>
+<p>exec</p>
+<p>pickle.loads</p>
+<p>pickle.load</p>
+<p>pickle.Unpickler</p>
+<p>cPickle.loads</p>
+<p>cPickle.load</p>
+<p>cPickle.Unpickler</p>
+<p>shelve.open</p>
+<p>marshal.load</p>
+<p>marshal.loads</p>
+<p>yaml.load</p>
+</blockquote>
+<p>错误示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">targetLogin</span><span class="params">(request)</span>:</span></span><br><span class="line">req = simplejson.loads(request.POST[<span class="string">'loginarray'</span>])</span><br><span class="line">req=unicode(req).encode(<span class="string">"utf-8"</span>)</span><br><span class="line">loginarray=eval(req)</span><br><span class="line">    <span class="keyword">return</span> loginarray</span><br></pre></td></tr></table></figure>
+
+<p>正确示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">targetLogin</span><span class="params">(request)</span>:</span></span><br><span class="line">	req = simplejson.loads(request.POST[<span class="string">'loginarray'</span>])</span><br><span class="line">	req=unicode(req).encode(<span class="string">"utf-8"</span>)</span><br><span class="line">	loginarray=ast.literal_eval(req)</span><br><span class="line">    <span class="keyword">return</span> loginarray</span><br></pre></td></tr></table></figure>
+
+<p>而yaml的安全执行接口则是yaml.safe_load,yaml.safe_load_all,还有marshal的相关接口。</p>
+<p>pickle的错误示例如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">createdoc</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method==<span class="string">'POST'</span>:</span><br><span class="line">        <span class="keyword">print</span> <span class="number">1234</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="comment">#获取POST数据</span></span><br><span class="line">            <span class="keyword">with</span> open(os.path.join(PENTEST_LOG_PATH,<span class="string">'post.json'</span>),<span class="string">'w'</span>) <span class="keyword">as</span> f :</span><br><span class="line">                f.write(json.dumps(request.POST))</span><br><span class="line">            sys.exit()</span><br><span class="line">            reportid = request.POST[<span class="string">'reportid'</span>]</span><br><span class="line">            report_title = request.POST[<span class="string">'reporttitle'</span>]</span><br><span class="line">            md5=request.POST[<span class="string">'md5'</span>]</span><br><span class="line">            template_info_id =float(request.POST[<span class="string">'template_info_id'</span>])</span><br><span class="line">            <span class="keyword">print</span> template_info_id,type(template_info_id)</span><br><span class="line">            industry = request.POST[<span class="string">'industry'</span>]</span><br><span class="line">            <span class="comment">#解析序列化的列表数据</span></span><br><span class="line">            mylog.info(<span class="string">"template_info_id:"</span>+str(template_info_id)+<span class="string">"  industry:"</span>+industry)</span><br><span class="line">            reportList = pickle.loads(request.POST[<span class="string">'testList'</span>])</span><br><span class="line">            <span class="keyword">print</span> <span class="string">'cr32'</span>,request.POST</span><br><span class="line">            <span class="keyword">print</span> <span class="string">'cr32'</span>,reportList</span><br><span class="line">            assetsList =  pickle.loads(request.POST[<span class="string">'assetsList'</span>])</span><br><span class="line">            <span class="keyword">print</span> <span class="string">'cr34'</span>,assetsList</span><br><span class="line"></span><br><span class="line">        <span class="keyword">except</span> Exception, e:</span><br><span class="line">            mylog.error(str(e)+<span class="string">"  %s传输数据错误"</span>%reportid)</span><br><span class="line">            <span class="keyword">return</span> HttpResponse(<span class="string">"NO"</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment">#处理上传文件</span></span><br><span class="line">        handle_uploaded_file(request.FILES[<span class="string">'file'</span>])<span class="comment">#上传文件到指定目录</span></span><br></pre></td></tr></table></figure>
+
+<p>正确示例：</p>
+<p>​    将pickle实现的功能都采用json格式来是实现，而且Python下json库都是安全的，可以放心使用。</p>
+<h3 id="七、安全上传"><a href="#七、安全上传" class="headerlink" title="七、安全上传"></a>七、安全上传</h3><p>​    在开发系统的时候，会涉及到上传一些一些图片，压缩包，xml等，在这些地方要严格做好安全上传，与之相反的则是任意文件上传。任意文件上传是指服务端未对代码上传数据类型做控制，导致可执行代码上传到服务器上从而导致被控制，在Django中，Django的默认上传接口做了防止目录穿越的操作，所以一定程度上缓解了上传攻击。</p>
+<p>错误示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.http <span class="keyword">import</span> HttpResponseRedirect</span><br><span class="line"><span class="keyword">from</span> django.shortcuts <span class="keyword">import</span> render_to_response</span><br><span class="line"><span class="keyword">from</span> .forms <span class="keyword">import</span> UploadFileForm</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handle_uploaded_file</span><span class="params">(f)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> open(f[<span class="string">'name'</span>], <span class="string">'wb+'</span>) <span class="keyword">as</span> destination:</span><br><span class="line">        <span class="keyword">for</span> chunk <span class="keyword">in</span> f.chunks():</span><br><span class="line">            destination.write(chunk)</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">upload_file</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'POST'</span>:</span><br><span class="line">        form = UploadFileForm(request.POST, request.FILES)</span><br><span class="line">        <span class="keyword">if</span> form.is_valid():</span><br><span class="line">            handle_uploaded_file(request.FILES[<span class="string">'file'</span>])</span><br><span class="line">            <span class="keyword">return</span> HttpResponseRedirect(<span class="string">'/success/url/'</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        form = UploadFileForm()</span><br><span class="line">    <span class="keyword">return</span> render_to_response(<span class="string">'upload.html'</span>, &#123;<span class="string">'form'</span>: form&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>​    一个正确的文件上传至少满足三个条件：第一个是校验文件后缀，最好是采用白名单控制，不在白名单之类的都抛出异常，如限制后缀ext在(‘png’,’jpg’)等；第二个是文件重命名，随机化命名能防止黑客猜测出文件路径，第三个是文件大小控制，这一步能防止上传大文件而导致的dos攻击。</p>
+<p>正确示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_validate_upload_customlogo</span><span class="params">(request)</span>:</span></span><br><span class="line"></span><br><span class="line">    upload_file = request.FILES.get(<span class="string">'logo'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> upload_file:</span><br><span class="line">        <span class="keyword">return</span> HttpResponse(_(<span class="string">"请选择图片"</span>))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> upload_file.size() &gt; <span class="number">500000</span>:</span><br><span class="line">        <span class="keyword">return</span> HttpResponse(_(<span class="string">"上传文件不能超过500M"</span>))</span><br><span class="line">    tmpfile = tempfile.mktemp(<span class="string">".tmp"</span>, <span class="string">"logo"</span>)</span><br><span class="line">    <span class="keyword">with</span> open(tmpfile, <span class="string">'w'</span>) <span class="keyword">as</span> destination:</span><br><span class="line">        <span class="keyword">for</span> chunk <span class="keyword">in</span> upload_file.chunks():</span><br><span class="line">            destination.write(chunk)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        img = Image.open(tmpfile)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> img.format <span class="keyword">in</span> [<span class="string">'BMP'</span>, <span class="string">'JPG'</span>, <span class="string">'JPEG'</span>, <span class="string">'PNG'</span>]:</span><br><span class="line">            <span class="keyword">return</span> HttpResponse(_(<span class="string">'Logo格式不合法'</span>))</span><br><span class="line">    <span class="keyword">except</span> Exception, e:</span><br><span class="line">        logger.exception(<span class="string">'Custom Logo format invalid'</span>)</span><br><span class="line">        <span class="keyword">return</span> HttpResponse(_(<span class="string">'Logo格式不合法'</span>))</span><br><span class="line">    os.unlink(tmpfile)</span><br></pre></td></tr></table></figure>
+
+<h3 id="八、防止目录穿越"><a href="#八、防止目录穿越" class="headerlink" title="八、防止目录穿越"></a>八、防止目录穿越</h3><p>​    目录穿越是攻击者利用../或者..\等越过当前目录，而在其他目录执行一些危险操作。典型的例子就是任意文件操作，一般都是通过目录穿越来操作任意文件。</p>
+<p>错误示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">download</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.GET <span class="keyword">and</span> request.GET.get(<span class="string">'file'</span>, <span class="literal">None</span>):</span><br><span class="line">        fname = os.path.join(selsettings.EXPORTER_BACKUP_STORAGE, request.GET.get(<span class="string">'file'</span>))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">raise</span> Http404</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(fname):</span><br><span class="line">        <span class="keyword">raise</span> Http404</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> fname.endswith(<span class="string">'.gz'</span>):</span><br><span class="line">        content_type=<span class="string">'application/x-gzip'</span></span><br><span class="line">        filename = <span class="string">'backup.tar.gz'</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        content_type=<span class="string">'application/zip'</span></span><br><span class="line">        filename = <span class="string">'backup.zip'</span></span><br><span class="line"></span><br><span class="line">    response = HttpResponse(open(fname, <span class="string">'rb'</span>).read(), content_type=content_type)</span><br><span class="line">    response[<span class="string">'Content-Length'</span>] = os.path.getsize(fname)</span><br><span class="line">    response[<span class="string">'Content-Disposition'</span>] = <span class="string">'attachment; filename=%s'</span> % filename</span><br><span class="line">    <span class="keyword">return</span> response</span><br></pre></td></tr></table></figure>
+
+<p>在上述代码中由于未限定文件名，可下载任意文件，再加上可目录穿越，因此可下载任意目录任意文件。</p>
+<p>正确示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">download</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.GET <span class="keyword">and</span> request.GET.get(<span class="string">'file'</span>, <span class="literal">None</span>):</span><br><span class="line">        fname = os.path.join(selsettings.EXPORTER_BACKUP_STORAGE, request.GET.get(<span class="string">'file'</span>))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">raise</span> Http404</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(fname):</span><br><span class="line">        <span class="keyword">raise</span> Http404</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="string">".."</span> <span class="keyword">in</span> fname:</span><br><span class="line">        <span class="keyword">raise</span> Http404</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> fname.endswith(<span class="string">'.gz'</span>):</span><br><span class="line">        content_type=<span class="string">'application/x-gzip'</span></span><br><span class="line">        filename = <span class="string">'backup.tar.gz'</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        content_type=<span class="string">'application/zip'</span></span><br><span class="line">        filename = <span class="string">'backup.zip'</span></span><br><span class="line"></span><br><span class="line">    response = HttpResponse(open(fname, <span class="string">'rb'</span>).read(), content_type=content_type)</span><br><span class="line">    response[<span class="string">'Content-Length'</span>] = os.path.getsize(fname)</span><br><span class="line">    response[<span class="string">'Content-Disposition'</span>] = <span class="string">'attachment; filename=%s'</span> % filename</span><br><span class="line">    <span class="keyword">return</span> response</span><br></pre></td></tr></table></figure>
+
+<h3 id="九、防止SSRF"><a href="#九、防止SSRF" class="headerlink" title="九、防止SSRF"></a>九、防止SSRF</h3><p>​    SSRF是Server-Side Request Forgery的缩写，即服务端请求伪造攻击，是攻击者借用服务端发起的攻击。在一些系统中，通常需要实现一些从外部地址加载图片，加载资源等功能，而这个加载的动作一般都是通过内部服务器发起的的，如果加载的地址不受限制的话，攻击者就可以对内网的应用发起攻击。典型的攻击有端口扫描，资产发现，攻击redis服务器，攻击struts2应用等。</p>
+<p>通常的解决方案：</p>
+<p>1，限制协议为http和https</p>
+<p>2，限制返回值</p>
+<p>3，限制ip格式</p>
+<h3 id="十、防止LDAP注入"><a href="#十、防止LDAP注入" class="headerlink" title="十、防止LDAP注入"></a>十、防止LDAP注入</h3><p>​    LDAP（Lightweight Directory Access Protocol）轻量级目录协议，是一种在线目录访问协议，主要用于资源查询，是X.500的一种简便的实现。它是一种树结构，查询效率很高，插入效率稍低。目录和数据库有很多相似之处，都用于存放数据，可以查询插入，目录可以存放各种数据，而数据库的数据则有比较严格的约束条件。</p>
+<p>​    LDAP目录以入口(entry，目录中存储的基本信息单元)的形式存储和组织数据结构，每个入口有一个唯一标示自己的专属名称(distnguished name)，DN由系列RDNs(ralative distinguished names)组成。另外还有两个常见的结构，对象类和属性。对象类(object class)会定义独一的OID，每个属性(attribute)也会分配唯一的OID号码。</p>
+<p>​    从注入原理来看，ldap注入分为and注入和or注入，先看and注入情形，假设查询结构如下(&amp;(user=username)(passwd=password)),这可能是采用采用LDAP进行登录验证的查询语句，其中username和password都是用户可控制的参数，那么可以在user处注入admin<em>)(objectClass=</em>)形成如下(&amp;(user=admin<em>)(objectClass=</em>))(passwd=password)) 有点小语法错误，如果在user处注入admin<em>)(objectClass=</em>))(&amp;(objectClass=<em>(&amp;(user=admin</em>)(objectClass=<em>))(|(objectClass=void)(passwd=passwd)) 无语法错误,对于openldap来说，只会执行第一个&amp;括号内的内容，由于objectClass=</em>恒为真，我们就能无需密码以admin用户的身份登录系统。如果不允许两个过滤服务器的执行，则是(&amp;(user=username)(injected_filter)(passwd=password)) 对于or注入，查询表达式如下：</p>
+<p>(|(user=username)(email=email_addr))</p>
+<p>假如username可控，即可注入</p>
+<p>username*)(objectClass=void))(|objectClass=void</p>
+<p>形成</p>
+<p>(|(user=username)(objectClass=void))(|objectClass=void)(email=email_addr)),由于objectClass=void恒为假，所以只有user=username的时候整个值为真。</p>
+<p>错误示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@api_view(['POST'])</span></span><br><span class="line"><span class="meta">@renderer_classes((JSONRenderer,))</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">reset_password_uri</span><span class="params">(request)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">ResetPasswordUrlValidators</span><span class="params">(Validators)</span>:</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,request)</span>:</span></span><br><span class="line">            super(ResetPasswordUrlValidators, self).__init__(request)</span><br><span class="line">            self.validators = ((<span class="string">'is_required'</span>, (<span class="string">'account_name'</span>,)),  )</span><br><span class="line"></span><br><span class="line">    params= ResetPasswordUrlValidators(request)()</span><br><span class="line">    <span class="keyword">with</span> LDAPContext() <span class="keyword">as</span> conn:</span><br><span class="line">        account_name = params.account_name.encode(<span class="string">'utf-8'</span>)</span><br><span class="line">        user = conn.search_s(ENTRY_CUSTOMER, ldap.SCOPE_SUBTREE, <span class="string">"(uid=%s)"</span> %account_name)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> user:</span><br><span class="line">            <span class="keyword">raise</span> NSExceptionBase(E_USERNAME_NOT_EXIST, <span class="string">'account name does not exist: %s'</span> %account_name)</span><br><span class="line">        <span class="keyword">if</span> len(user) != <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">raise</span> NSExceptionBase(E_PARAM_USERNAME_INVALID, <span class="string">'account name is not valid, name: %s, %d'</span> %(account_name, len(user)))</span><br><span class="line">        user = deserialize_ldapobject(user[<span class="number">0</span>])</span><br><span class="line">        uri = _gen_activation_params(user)</span><br><span class="line">        logger.info(<span class="string">'generate the uri args, userid: %s  args: %s'</span> %(str(user), uri))</span><br><span class="line">        <span class="keyword">return</span> APIResponse(&#123;<span class="string">'info'</span>:user, <span class="string">'uri'</span>: uri&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>正确示例： 正确的做法是先将要查询的参数用ldap.filter.escape_filter_chars过滤，它会转义那些特殊字符。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">account_name = ldap.filter.escape_filter_chars(account_name)</span><br></pre></td></tr></table></figure>
+
+<h3 id="十一、防范XXE漏洞"><a href="#十一、防范XXE漏洞" class="headerlink" title="十一、防范XXE漏洞"></a>十一、防范XXE漏洞</h3><p>​    XXE就是XML External<br>Entity的简写，俗称XML外部实体攻击。XML外部实体是XML的一个特性，在libxml2.9以下是默认打开的，这就会导致一些Python解析库在解析xml的时候解析外部实体，而外部实体的uri可以为外部的url，从而在解析uri的过程中就会存在内部信息泄露，主要危害也还是内部信息泄露。在Python编码环境中，lxml中默认采用XMLParser</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">XMLParser</span><span class="params">(_FeedParser)</span></span></span><br><span class="line"><span class="class"> |  <span class="title">XMLParser</span><span class="params">(self, encoding=None, attribute_defaults=False, dtd_validation=False, load_dtd=False, no_network=True, ns_clean=False, recover=False, XMLSchema schema=None, remove_blank_t</span></span></span><br><span class="line"><span class="class"><span class="params">ext=False, resolve_entities=True, remove_comments=False, remove_pis=False, strip_cdata=True, target=None, compact=True)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>注意两个关键参数，resolve_entities=True会导致解析外部实体，no_network=True则限制不能将数据导出到外部，如果不禁用会导致一些ssrf问题，Python库中一些其他xml操作库则不受影响，如Xml.dom.minidom,xml.etree.ElementTree不受影响</p>
+<p>错误示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> lxml <span class="keyword">import</span> etree</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">loadxml</span><span class="params">(path=<span class="string">''</span>)</span></span></span><br><span class="line">     tree = None</span><br><span class="line">     <span class="keyword">if</span> isinstance(path,basestring) <span class="keyword">and</span> <span class="keyword">not</span> os.path.exists(path):</span><br><span class="line">          logger.error(<span class="string">"path %s is not exists"</span>, path)</span><br><span class="line">     <span class="keyword">else</span>:</span><br><span class="line">          tree = etree.parse(path)</span><br><span class="line">     <span class="keyword">return</span> tree</span><br></pre></td></tr></table></figure>
+
+<p>正确示例:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> lxml <span class="keyword">import</span> etree</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">loadxml</span><span class="params">(path=<span class="string">''</span>)</span></span></span><br><span class="line">     tree = None</span><br><span class="line">     <span class="keyword">if</span> isinstance(path,basestring) <span class="keyword">and</span> <span class="keyword">not</span> os.path.exists(path):</span><br><span class="line">          logger.error(<span class="string">"path %s is not exists"</span>, path)</span><br><span class="line">     <span class="keyword">else</span>:</span><br><span class="line">          tree = etree.parse(xmlSource,etree.XMLParser(resolve_entities=<span class="literal">False</span>,no_network=<span class="literal">True</span>))</span><br><span class="line">     <span class="keyword">return</span> tree</span><br></pre></td></tr></table></figure>
+
+<p>在正确示例中禁用了resolve_entites和no_work，这样就防范了XXE攻击。</p>
+<h3 id="十二、其他类型"><a href="#十二、其他类型" class="headerlink" title="十二、其他类型"></a>十二、其他类型</h3><h4 id="1）身份认证"><a href="#1）身份认证" class="headerlink" title="1）身份认证"></a>1）身份认证</h4><p>1， 身份认证绕过，确保应用程序的身份认证过程无法绕过。</p>
+<p>2， 认证数据保护，确保认证过程中的数据被有效保护。例如用户名和口令信息应当通过加密方式（SSL/SSH等等）进行传输以防止窃听。</p>
+<p>3， 用户名获取，攻击者无法通过访问该应用系统的公开信息获取用户名信息</p>
+<p>4， 口令强度，应用程序应当确保用户口令必须满足一定强度（长度和复杂度），使之难以被猜测，典型的案例就是密码使用nsfocus，还有系统中的第三方应用如数据库，redis空口令或者弱口令。</p>
+<p>5， 口令重设，采用安全的口令重设机制。</p>
+<p>6， 口令锁定，当错误输入多次口令之后，该用户口令应当被暂时锁定，以防止暴力猜测攻击，无口令锁定的话，需加上验证码机制</p>
+<p>7， 枚举用户名，确保登陆过程不能被用来枚举用户名</p>
+<p>8， 会话管理，对于HTTP应用，应当采用有效的会话管理机制，保证会话令牌长度、会话超时机制、会话令牌的安全存储以及随机性满足安全要求</p>
+<h4 id="2）访问控制"><a href="#2）访问控制" class="headerlink" title="2）访问控制"></a>2）访问控制</h4><p>1， 无权限管理</p>
+<p>无权限管理的网站一般是一些静态网站或者没有重要信息的网站，一般的管理系统都是有权限管理的。</p>
+<p>2， 垂直权限管理</p>
+<p>垂直越权主要是非管理员用户可以执行管理员的操作。</p>
+<p>3， 水平权限管理</p>
+<p>水平权限是指同一级别的用户的越权操作，如用户A可以访问用户B的详细资料。</p>
+<p>常见的访问控制实现的三种方式：</p>
+<p>\1.    所有的请求都由一个统一的程序处理。该程序根据用户的权限，来完成请求的下发。</p>
+<p>通常这种实现方式比较不容易出现问题，一般是程序的逻辑错误或则开发者的失误会导致越权访问等问题。</p>
+<p>\2.    权限判断功能由一个统一的文件来实现，所有页面的开始部分都会引用这个文件来做权限判断。这类实现方式，着重测试两个方面：</p>
+<p>a.     实现权限控制的页面是否存在逻辑错误或者人为的失误。</p>
+<p>b.    是否所有页面在最开始都引用了权限判断模块。如果一些页面实际上是对权限等级有要求的，而且在页面的开始部分没有引用实现权限判断的模块，那么就会产生越权访问的漏洞。</p>
+<p>\3.    每个页面的开始处都有单独的代码来进行权限的判断。这种实现方式算是最容易出问题的，管理起来容易逻辑混乱，且代码量大，每个页面都需要人为的插入代码，容易出现遗漏。通常比较容易出现问题的地方是，一个页面虽然做了权限的判断，但是它引用的另外一个页面则没有做权限的控制，导致攻击者可直接访问。</p>
+<h4 id="3）配置管理"><a href="#3）配置管理" class="headerlink" title="3）配置管理"></a>3）配置管理</h4><p>1， 依赖管理，应用是否存在已知安全漏洞，确保默认配置情况下各个应用没有已知的安全漏洞。例如应用版本应当是最新或者安装了最新的补丁。</p>
+<p>2， 开放不必要的服务，系统开放了不必要的服务可能被用来获取信息或攻击。</p>
+<p>3， 泄漏目录列表信息（WEB），确保WEB服务器禁止了目录列表，泄漏目录和文件信息。</p>
+<p>4， 目录和文件权限，确保目录和文件设置了正确权限，防止用户非法上传、下载、修改。</p>
+<p>范例文件和备份文件(WEB)，确保系统中不存在能被访问到的范例文件和备份文件</p>
+<p>5， 确保web目录下没有.old、.bak、.cvs、.svn、.git等文件和目录</p>
+<p>6， 管理界面可访问性，确保应用或系统的管理界面不能被直接从Internet访问或需要授权访问</p>
+<p>7， 默认用户和口令, 确保应用不存在默认用户和默认口令</p>
+<p>8， 包含文件测试, 确保代码使用的类似.inc后缀的头文件不会泄露源码</p>
+<p>Web服务配置文件, 检查http.conf，php.ini等配置文件没有安全问题，php.ini应该关闭不必要的特性，如远程包含、全局变量等</p>
+<h4 id="4）数据保护"><a href="#4）数据保护" class="headerlink" title="4）数据保护"></a>4）数据保护</h4><p>1， 敏感信息泄露，确保没有敏感信息（例如口令明文）在访问应用的过程中被泄漏。</p>
+<p>2， 数据存储安全，敏感数据应当以安全方式存储，例如口令信息应当以密文方式保存而不应当保存明文。典型的错误就是base64编码存储，这种方式被很多开发人员认为是一种加密机制，其实不是，base64编码人人都可解。</p>
+<p>3， 数据传输加密，访问应用时数据应当通过加密通道传输。</p>
+<h4 id="5）错误处理"><a href="#5）错误处理" class="headerlink" title="5）错误处理"></a>5）错误处理</h4><p>​     应用错误信息显示，当应用发生错误之后，不应当显示能被攻击者利用的细节错误信息，例如应用版本、目录、源代码信息等等，在Django中典型案例就是settings.py中Debug=True开关打开。</p>
+<h4 id="6）缓冲区溢出"><a href="#6）缓冲区溢出" class="headerlink" title="6）缓冲区溢出"></a>6）缓冲区溢出</h4><p>​    缓冲区溢出，确保应用不受缓冲区溢出漏洞影响，监听端口或者通过Web应用流程可访问到的二进制程序是否存在溢出等问题</p>
+<h4 id="7）端口开放"><a href="#7）端口开放" class="headerlink" title="7）端口开放"></a>7）端口开放</h4><p>​    一般的系统都是建议只开放443和ssh端口，并且ssh端口是由443端口放开放的web服务来控制。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/技术类/" rel="tag"># 技术类</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/14/矢量网络分析仪自动化软件开发流程/" rel="next" title="矢量网络分析仪自动化软件开发流程">
+                <i class="fa fa-chevron-left"></i> 矢量网络分析仪自动化软件开发流程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/20/centos7登录只启动浏览器/" rel="prev" title="centos7登录只启动浏览器">
+                centos7登录只启动浏览器 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#对信任边界外数据做校验"><span class="nav-number">1.</span> <span class="nav-text">对信任边界外数据做校验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一、对信任边界外数据做校验"><span class="nav-number">2.</span> <span class="nav-text">一、对信任边界外数据做校验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、防范XSS攻击"><span class="nav-number">3.</span> <span class="nav-text">二、防范XSS攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、禁止关闭CSRF"><span class="nav-number">4.</span> <span class="nav-text">三、禁止关闭CSRF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四、禁止使用os-system等拼接执行命令"><span class="nav-number">5.</span> <span class="nav-text">四、禁止使用os.system等拼接执行命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#五、禁止动态拼接SQL"><span class="nav-number">6.</span> <span class="nav-text">五、禁止动态拼接SQL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#六、禁止使用eval，pickle等危险代码执行接口"><span class="nav-number">7.</span> <span class="nav-text">六、禁止使用eval，pickle等危险代码执行接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#七、安全上传"><span class="nav-number">8.</span> <span class="nav-text">七、安全上传</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#八、防止目录穿越"><span class="nav-number">9.</span> <span class="nav-text">八、防止目录穿越</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#九、防止SSRF"><span class="nav-number">10.</span> <span class="nav-text">九、防止SSRF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#十、防止LDAP注入"><span class="nav-number">11.</span> <span class="nav-text">十、防止LDAP注入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#十一、防范XXE漏洞"><span class="nav-number">12.</span> <span class="nav-text">十一、防范XXE漏洞</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#十二、其他类型"><span class="nav-number">13.</span> <span class="nav-text">十二、其他类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1）身份认证"><span class="nav-number">13.1.</span> <span class="nav-text">1）身份认证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2）访问控制"><span class="nav-number">13.2.</span> <span class="nav-text">2）访问控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3）配置管理"><span class="nav-number">13.3.</span> <span class="nav-text">3）配置管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4）数据保护"><span class="nav-number">13.4.</span> <span class="nav-text">4）数据保护</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5）错误处理"><span class="nav-number">13.5.</span> <span class="nav-text">5）错误处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6）缓冲区溢出"><span class="nav-number">13.6.</span> <span class="nav-text">6）缓冲区溢出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7）端口开放"><span class="nav-number">13.7.</span> <span class="nav-text">7）端口开放</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

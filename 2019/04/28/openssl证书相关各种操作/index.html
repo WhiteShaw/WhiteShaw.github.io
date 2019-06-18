@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="安全相关,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="一、目的​    在HTTPS的那片文章中，提到了一些证书的相关知识，也知道了CA的作用。可能有人会说，我要是不相信CA中心怎么办，我能不能自己建立起这样一套体系，假如我是一个公司，我有一个CA部门，所有的员工访问公司的资源都需要用CA部门签发的证书。这样当然是可以的啦，而且据我所知，国内的一些大的国企，内部所用的认证机制就是这样的，例如国家电网。一个最小的实现这个机制的单元需要三个部分，现在假设">
+<meta name="keywords" content="安全相关">
+<meta property="og:type" content="article">
+<meta property="og:title" content="openssl证书相关各种操作">
+<meta property="og:url" content="http://yoursite.com/2019/04/28/openssl证书相关各种操作/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="一、目的​    在HTTPS的那片文章中，提到了一些证书的相关知识，也知道了CA的作用。可能有人会说，我要是不相信CA中心怎么办，我能不能自己建立起这样一套体系，假如我是一个公司，我有一个CA部门，所有的员工访问公司的资源都需要用CA部门签发的证书。这样当然是可以的啦，而且据我所知，国内的一些大的国企，内部所用的认证机制就是这样的，例如国家电网。一个最小的实现这个机制的单元需要三个部分，现在假设">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-04-28T10:36:45.857Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="openssl证书相关各种操作">
+<meta name="twitter:description" content="一、目的​    在HTTPS的那片文章中，提到了一些证书的相关知识，也知道了CA的作用。可能有人会说，我要是不相信CA中心怎么办，我能不能自己建立起这样一套体系，假如我是一个公司，我有一个CA部门，所有的员工访问公司的资源都需要用CA部门签发的证书。这样当然是可以的啦，而且据我所知，国内的一些大的国企，内部所用的认证机制就是这样的，例如国家电网。一个最小的实现这个机制的单元需要三个部分，现在假设">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/28/openssl证书相关各种操作/">
+
+
+
+
+
+  <title>openssl证书相关各种操作 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/28/openssl证书相关各种操作/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">openssl证书相关各种操作</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-28T14:11:25+08:00">
+                2019-04-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全相关/" itemprop="url" rel="index">
+                    <span itemprop="name">安全相关</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="一、目的"><a href="#一、目的" class="headerlink" title="一、目的"></a>一、目的</h3><p>​    在HTTPS的那片文章中，提到了一些证书的相关知识，也知道了CA的作用。可能有人会说，我要是不相信CA中心怎么办，我能不能自己建立起这样一套体系，假如我是一个公司，我有一个CA部门，所有的员工访问公司的资源都需要用CA部门签发的证书。这样当然是可以的啦，而且据我所知，国内的一些大的国企，内部所用的认证机制就是这样的，例如国家电网。一个最小的实现这个机制的单元需要三个部分，现在假设为：CA部门，Bob，Alice</p>
+<h3 id="二、相关知识"><a href="#二、相关知识" class="headerlink" title="二、相关知识"></a>二、相关知识</h3><p>（1）OpenSSL</p>
+<p>​    OpenSSL是一个开放源代码的软件包，应用程序可以使用这个包来进行安全通信，其中包含了主流的各种加解密算法，在本文中我们可以把openssl理解为操作证书的工具。当然如果要求使用国密加密算法，可以使用gmssl命令，参数应该是一样的。</p>
+<p>（2）证书标准</p>
+<p>​    <strong>X.509</strong> - 这是一种证书标准,主要定义了证书中应该包含哪些内容.其详情可以参考RFC5280,SSL使用的就是这种证书标准.</p>
+<p>（3）编码格式</p>
+<p>​    同样的X.509证书,可能有不同的编码格式,目前有以下两种编码格式：</p>
+<p>​    <strong>PEM</strong> - Privacy Enhanced Mail,打开看文本格式,以”—–BEGIN…”开头, “—–END…”结尾,内容是BASE64编码.</p>
+<p>​    查看PEM格式证书的信息:openssl x509 -in certificate.pem -text -noout</p>
+<p>​    Apache和*NIX服务器偏向于使用这种编码格式.</p>
+<p>​    <strong>DER</strong> - Distinguished Encoding Rules,打开看是二进制格式,不可读.</p>
+<p>​    查看DER格式证书的信息:openssl x509 -in certificate.der <strong>-inform der</strong> -text -noout</p>
+<p>​    Java和Windows服务器偏向于使用这种编码格式.</p>
+<p>（4）编码格式的转换</p>
+<p>​    <strong>PEM转为DER</strong> openssl x509 -in cert.crt -outform der -out cert.der</p>
+<p>​    <strong>DER转为PEM</strong> openssl x509 -in cert.crt -inform der -outform pem -out cert.pem</p>
+<p>​    (提示:要转换KEY文件也类似,只不过把x509换成rsa,要转CSR的话,把x509换成req…)</p>
+<h3 id="三、成立CA部门"><a href="#三、成立CA部门" class="headerlink" title="三、成立CA部门"></a>三、成立CA部门</h3><p>​    我们知道证书签发的原理是用CA私钥对别人的公钥进行签名，别人用CA的公钥去验证签名，因此，要想成立CA部门，我们至少需要一对CA公私钥。其步骤如下：</p>
+<p>（1）生成私钥：</p>
+<p>​    openssl genrsa -aes256 -out cakey.pem 2048</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>genrsa</td>
+<td>使用RSA算法产生私钥</td>
+</tr>
+<tr>
+<td>-aes256</td>
+<td>使用256位密钥的AES算法对私钥进行加密</td>
+</tr>
+<tr>
+<td>-out</td>
+<td>输出文件名</td>
+</tr>
+<tr>
+<td>2048</td>
+<td>指定私钥长度</td>
+</tr>
+</tbody></table>
+<p>​    其中需要输入密码，用来保护私钥不能被别人非法查看</p>
+<p>（2）生成CA证书的请求文件，一般后缀名为csr</p>
+<p>​    openssl req -new -key cakey.pem -out ca.csr -subj “/C=CN/ST=caprovince/L=cacity/O=caorganization/OU=cagroup/CN=nameca”</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>req</td>
+<td>执行证书签发命令</td>
+</tr>
+<tr>
+<td>-new</td>
+<td>新证书签发请求</td>
+</tr>
+<tr>
+<td>-key</td>
+<td>指定私钥路径</td>
+</tr>
+<tr>
+<td>-out</td>
+<td>指定csr文件的输出路径</td>
+</tr>
+<tr>
+<td>-subj</td>
+<td>指定证书相关的信息，包括国家、地域、公司等信息</td>
+</tr>
+</tbody></table>
+<p>​    此处需要输入私钥的保护密码。</p>
+<p>（3）利用CA的私钥给自己的请求签发证书文件，其中也包括了公钥信息</p>
+<p>​    openssl x509 -req -days 365 -sha1 -signkey cakey.pem -in ca.csr -out ca.cer</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>x509</td>
+<td>生成x509标准格式的证书</td>
+</tr>
+<tr>
+<td>-req</td>
+<td>进行请求签发</td>
+</tr>
+<tr>
+<td>-days</td>
+<td>证书的有效日期</td>
+</tr>
+<tr>
+<td>-sha1</td>
+<td>证书摘要采用sha1算法</td>
+</tr>
+<tr>
+<td>-signkey</td>
+<td>签发证书所使用的私钥</td>
+</tr>
+<tr>
+<td>-in</td>
+<td>要输入的csr文件</td>
+</tr>
+<tr>
+<td>-out</td>
+<td>要输出的证书文件，有时也使用后缀名.crt</td>
+</tr>
+</tbody></table>
+<p>​    至此，我们就拥有了CA机构的私钥和证书文件了，私钥用于对别人进行签名生成证书，因为ca证书包含公钥，则是用于验证CA的签名。但是，要想能够成功进行签名，还得做一些其他的准备。</p>
+<p>（4）目录准备</p>
+<p>​    查看openssl的默认配置文件：/usr/ssl/openssl.cnf。其中有内容如下：</p>
+<blockquote>
+<p>[ CA_default ]</p>
+<p>dir             = ./demoCA              # Where everything is kept<br>certs           = $dir/certs            # Where the issued certs are kept<br>crl_dir         = $dir/crl              # Where the issued crl are kept<br>database        = $dir/index.txt        # database index file.</p>
+</blockquote>
+<p>​    说明当前CA的工作目录为./demoCA，那么我们要准备的目录就是这个目录：</p>
+<p>​    a. 创建目录mkdir ./demoCA/newcerts ./demoCA/private -p</p>
+<p>​    b. 将CA私钥拷贝到./demoCA/private下</p>
+<p>​    c. 创建文件：touch ./demoCA/index.txt</p>
+<p>​    d. 执行命令: echo 10000001 &gt; ./demoCA/serial</p>
+<p>​    e. 保证CA的证书ca.cer在当前目录下</p>
+<p>至此，我们的CA部门就算创建好了。</p>
+<h3 id="四、Bob和Alice的证书"><a href="#四、Bob和Alice的证书" class="headerlink" title="四、Bob和Alice的证书"></a>四、Bob和Alice的证书</h3><p>​    和CA证书一样，Bob需要有一个自己的私钥，并生成证书请求：</p>
+<p>​    openssl genrsa -aes256 -out bob.pem 2048</p>
+<p>​    openssl req -new -key bob.pem -out bob.csr -subj “/C=CN/ST=caprovince/L=cacity/O=caorganization/OU=bobgroup/CN=bob”</p>
+<p>​    这里需要保证Bob的省市公司字段和ca的一致，现在Bob生成了他的证书请求，他需要拿着这个请求去找CA部门，让CA部门给他签发证书：</p>
+<p>​    openssl ca -in bob.csr -out bob.cer -cert ca.cer -keyfile cakey.pem</p>
+<p>​    最后，Bob就拥有了自己的私钥bob.pem和自己的证书bob.cer</p>
+<p>​    同理，Alice也拥有了自己的私有alice.pem和自己的证书alice.cer</p>
+<h3 id="五、如何使用"><a href="#五、如何使用" class="headerlink" title="五、如何使用"></a>五、如何使用</h3><p>​    此时，Bob和Alice需要使用证书进行通信加密了。对于Bob来说，他手上必须要有这几个东西：自己的私钥bob.pem；Alice的证书alice.cer；ca的证书ca.cer。加密传输的过程如下：</p>
+<p>（1）Bob首先要确定Alice的证书是CA部门签发的，而不是别的什么非法的机构签发的：</p>
+<p>​    openssl verify -CAfile ca.cer alice.cer</p>
+<p>​    返回OK，证明这个证书确实是CA部门签发的。</p>
+<p>（2）查看证书是否是Alice的。</p>
+<p>​    openssl x509 -inform pem -in alice.cer -text -noout </p>
+<p>（3）利用Alice的证书生成公钥文件alicepub.pem</p>
+<p>​    openssl x509 -in alice.cer -inform pem -pubkey -noout &gt; alicepub.pem</p>
+<p>（4）利用Alice的公钥加密要传输的文件：</p>
+<p>​    openssl rsautl -encrypt -in src.txt -inkey alicepub.pem -pubin -out dst.txt</p>
+<p>​    dst.txt就是我们的密文文件了，把它发送给Alice</p>
+<p>（5）Alice利用自己的私钥解密收到的文件：</p>
+<p>​    openssl rsautl -decrypt -in dst.txt -inkey alice.pem  -out src.txt</p>
+<p>​    至此，Alice就获取到了解密后的文件src.txt了</p>
+<p>当然，公私密钥还有进行签名和验证的作用：</p>
+<p>（1）Bob首先需要生成PCKS8格式的私钥bobpri.pem：</p>
+<p>​    openssl pkcs8 -topk8 -in bob.pem  -out bobpri.pem -nocrypt</p>
+<p>（2）Bob利用刚生成的私钥文件对数据文件进行签名：</p>
+<p>​    openssl rsautl -sign -in src.txt -inkey bobpri.pem  -out sign.txt</p>
+<p>（3）Alice利用Bob的公钥进行签名验证：</p>
+<p>​    openssl rsautl -verify -in sign.txt -inkey bobpub.pem -pubin -out result.txt</p>
+<p>​    当然Alice需要使用上面第3点使用的方法利用Bob的证书先生成公钥bobpub.pem</p>
+<p>这样，Bob可以对发送的数据计算HASH值，然后利用自己的私钥签名，发送给Alice，Alice在接收到签名之后先进行验证，然后再自己计算一次HASH，对比两个是否一致。</p>
+<h3 id="六、后续"><a href="#六、后续" class="headerlink" title="六、后续"></a>六、后续</h3><p>​    后来公司来了新员工，他们也都可以参考Bob和Alice的方法去CA部门申请证书。而且随着公司的不断壮大，一个CA部门已经忙不过来，CA部门也能够进行分级，一级CA可以给二级CA签发证书，二级可以给三级签发证书，以此类推，这个证书签发的工作就可以下放的下级机构了。不过在进行验证的时候，需要将前面所有等级CA的证书用来进行链式验证，如：</p>
+<p>​    openssl verify -CAfile &lt;(cat ca.cer ca1.cer ca2.cer) alice2.cer</p>
+<h3 id="七、参考"><a href="#七、参考" class="headerlink" title="七、参考"></a>七、参考</h3><p>​    openssl命令参考：<a href="https://blog.csdn.net/scuyxi/article/details/54884976" target="_blank" rel="noopener">https://blog.csdn.net/scuyxi/article/details/54884976</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/安全相关/" rel="tag"># 安全相关</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/10/PPT 制作/" rel="next" title="PPT 制作">
+                <i class="fa fa-chevron-left"></i> PPT 制作
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/06/焦虑的原理/" rel="prev" title="焦虑的原理">
+                焦虑的原理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、目的"><span class="nav-number">1.</span> <span class="nav-text">一、目的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、相关知识"><span class="nav-number">2.</span> <span class="nav-text">二、相关知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、成立CA部门"><span class="nav-number">3.</span> <span class="nav-text">三、成立CA部门</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四、Bob和Alice的证书"><span class="nav-number">4.</span> <span class="nav-text">四、Bob和Alice的证书</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#五、如何使用"><span class="nav-number">5.</span> <span class="nav-text">五、如何使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#六、后续"><span class="nav-number">6.</span> <span class="nav-text">六、后续</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#七、参考"><span class="nav-number">7.</span> <span class="nav-text">七、参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

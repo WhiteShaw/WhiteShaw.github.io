@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="技术类,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="一、提出问题​    公司内部通常使用私有IP地址进行通信。如果公司在外地开了一个分公司，如何使分公司的同事也能够访问公司内部的资源呢？如果有公司的客户想要访问公司内部的资源又怎么办呢？一般情况下有两种方式可以解决这个问题。第一种就是搭建私有网络线路，但是这种方法的成本相当高。如何有效降低这个成本呢？那就是利用已有的线路，那就是使用运营商已经搭建好的线路，也就是通过英特网进行传输。这就是这里所说的">
+<meta name="keywords" content="技术类">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VPN详解">
+<meta property="og:url" content="http://yoursite.com/2019/03/21/VPN 详解/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="一、提出问题​    公司内部通常使用私有IP地址进行通信。如果公司在外地开了一个分公司，如何使分公司的同事也能够访问公司内部的资源呢？如果有公司的客户想要访问公司内部的资源又怎么办呢？一般情况下有两种方式可以解决这个问题。第一种就是搭建私有网络线路，但是这种方法的成本相当高。如何有效降低这个成本呢？那就是利用已有的线路，那就是使用运营商已经搭建好的线路，也就是通过英特网进行传输。这就是这里所说的">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-03-27T06:38:39.771Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VPN详解">
+<meta name="twitter:description" content="一、提出问题​    公司内部通常使用私有IP地址进行通信。如果公司在外地开了一个分公司，如何使分公司的同事也能够访问公司内部的资源呢？如果有公司的客户想要访问公司内部的资源又怎么办呢？一般情况下有两种方式可以解决这个问题。第一种就是搭建私有网络线路，但是这种方法的成本相当高。如何有效降低这个成本呢？那就是利用已有的线路，那就是使用运营商已经搭建好的线路，也就是通过英特网进行传输。这就是这里所说的">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/03/21/VPN 详解/">
+
+
+
+
+
+  <title>VPN详解 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/21/VPN 详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">VPN详解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-21T14:22:34+08:00">
+                2019-03-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/安全/" itemprop="url" rel="index">
+                    <span itemprop="name">安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="一、提出问题"><a href="#一、提出问题" class="headerlink" title="一、提出问题"></a>一、提出问题</h3><p>​    公司内部通常使用私有IP地址进行通信。如果公司在外地开了一个分公司，如何使分公司的同事也能够访问公司内部的资源呢？如果有公司的客户想要访问公司内部的资源又怎么办呢？一般情况下有两种方式可以解决这个问题。第一种就是搭建私有网络线路，但是这种方法的成本相当高。如何有效降低这个成本呢？那就是利用已有的线路，那就是使用运营商已经搭建好的线路，也就是通过英特网进行传输。这就是这里所说的第二种方法。不过这种方法也有明显的缺陷，首先是私有的ip地址是无法在公网上传输的，其次是公司内部的数据在公网上传输会存在很大的安全隐患。这时，虚拟私有网络（VPN，Virtual Private Network）技术就是为了解决这些问题应运而生了。</p>
+<h3 id="二、解决方案"><a href="#二、解决方案" class="headerlink" title="二、解决方案"></a>二、解决方案</h3><p>​    上一节提到的两个需求，正好对应了VPN的以下两种连接方式。</p>
+<ol>
+<li><h4 id="站点到站点（Site-to-Site）（公司-分公司）"><a href="#站点到站点（Site-to-Site）（公司-分公司）" class="headerlink" title="站点到站点（Site to Site）（公司-分公司）"></a>站点到站点（Site to Site）（公司-分公司）</h4><p>​    站点到站点连接技术是一种主要的VPN连接方式，主要用于公司重要站点之间的连接。如图所示。两个站点采用VPN技术虚拟地连接在一起，使得它们在通信时，就像通过普通网线一样，可以访问到对方。站点到站点的VPN技术对于终端用户而言是透明的，即用户感觉不到VPN技术的存在，而是觉得相互访问的站点位于同一个内网。</p>
+
+
+<p>​    站点到站点VPN连接技术主要包括下面几种：</p>
+<p>​    （1） GRE</p>
+<p>​        GRE(Generic Routing Encapsulation，通用路由封装)协议能够对各种网络层协议（如IP和IPX）的数据报文进行封装，被封装的数据报文能够在IP网络中传输。GRE采用了Tunnel技术，是VPN的三层隧道协议。</p>
+<p>​    （2） IPSec VPN</p>
+<p>​        IPSec VPN是业界标准的网络安全协议，可以为IP网络通信提供透明的安全服务，保护TCP/IP通信免遭窃听和篡改，从而有效地抵御网络攻击。IPSec VPN在网络的灵活性、安全性、经济性、扩展性等方面极具优势，因此越来越受到企业用户的青睐。</p>
+<p>​    （3）MPLS VPN</p>
+<p>​        MPLS VPN是指采用MPLS技术在宽带IP的骨干网络上构建企业IP专网，以实现跨地域、安全、高速、可靠的数据、语音、图像等多业务通信。</p>
+<h4 id="2-远程访问（Remote-Access）（客户-公司）"><a href="#2-远程访问（Remote-Access）（客户-公司）" class="headerlink" title="2. 远程访问（Remote Access）（客户-公司）"></a>2. 远程访问（Remote Access）（客户-公司）</h4><p>​    在这种场合下，需要用到远程访问VPN连接技术。远程访问VPN一般需要预先在客户计算机上安装VPN客户端（客户端依据具体采用的实现技术，而有所不同），并且通过这个客户端拨号到公司VPN网关。如果拨号成功，客户就行通过一根网线虚拟地连接到公司的VPN网关，然后获取公司网络的一个地址，并且使用这个地址来访问公司内部服务器，如图所示。</p>
+
+
+<p>远程访问VPN连接技术有如下几种：</p>
+<p>（1）IPSec VPN</p>
+<p>​    IPSec VPN是一种全面的技术，它不仅适用于站点到站点VPN连接方式，也能够部署远程访问VPN。</p>
+<p>（2）VPDN</p>
+<p>​    VPDN(Virtual Private Dial-up Networks，虚拟私有拨号网络)是VPN业务的一种，具体包含的技术包括PPTP、L2TP和PPPoE等，是基于拨号用户的虚拟专用拨号网业务。即用户以拨号接入方式联网，并通过CDMA 1x分组网络传输数据时，VPDN会对传输的数据进行封装和加密，从而保障了数据传输的私密性，并使VPN到达私有网络的安全级别。VPDN是利用IP网络承载功能结合相应的认证和授权机制建立起来的一种安全虚拟专用网，是一种比较传统的VPN技术。</p>
+<p>（3）SSL VPN</p>
+<p>​    主要应用在Web方面的访问。</p>
+<p>本文则主要介绍IPSec VPN技术。</p>
+</li>
+</ol>
+<h3 id="三、IPSec-VPN技术实现"><a href="#三、IPSec-VPN技术实现" class="headerlink" title="三、IPSec  VPN技术实现"></a>三、IPSec  VPN技术实现</h3><p>​    结合第一章中提到的内容，我们总结一下想让公司内网资源在英特网上进行传输会遇到的问题，以及IPSec利用了什么技术来解决这些问题：</p>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>解决办法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>私有地址无法在公网传输</td>
+<td>隧道技术</td>
+</tr>
+<tr>
+<td>明文传输泄露公司机密</td>
+<td>加密传输</td>
+</tr>
+<tr>
+<td>传输数据包可能被篡改</td>
+<td>散列算法</td>
+</tr>
+<tr>
+<td>如何确定对方身份</td>
+<td>认证技术</td>
+</tr>
+</tbody></table>
+<p>以下就分开来介绍各个技术都是如何实现的。</p>
+<h4 id="1、隧道技术"><a href="#1、隧道技术" class="headerlink" title="1、隧道技术"></a>1、隧道技术</h4><p>​    以Site to Site的连接方式为例，在Site与Site之间的公网上建立一个虚拟的隧道，这个隧道可以传输内网的数据包，从而让使用私有地址的数据包在公网上传输。而实际的实现方式则是在原始的数据包上添加一个新的ip头，新的ip头使用的是公网的ip地址，也就是两个Site的地址，等数据包到达目的端的Site之后，再把新加上的ip头去掉，让里面的数据再在内网中进行传输。这就是IPSec VPN技术中所使用的两种<strong>封装模式</strong>之一的隧道模式，IPSec还支持的另一种封装模式是传输模式。</p>
+<p>​    但是在隧道模式中会遇到另一个问题：当封装过的数据包到达某一个Site之后，这个Site是如何知道这个数据包是封装过的数据包还是正常的数据包呢？（因为互联网上还有很多正常的数据包）因此我们不能仅仅只在原始数据包前面加上新的ip头，还需要加上封装协议，因此在介绍隧道模式之前我们需要先了解一下封装协议。</p>
+<p>​    IPSec支持两种封装协议：ESP协议和AH协议</p>
+<p><strong>ESP(Encapsulation Security Payload)协议：</strong></p>
+<p>​    为了能够区分普通的报文和IPSec报文，我们要在IP头的后面，传输头的前面加上ESP头部，ESP的IP协议号是50。如果我们在报文中新加入一个头部只是为了对报文进行区分，那也有点太大材小用了，而实际上ESP的头部的主要作用是：<strong>为数据提供私密性（加密）、完整性和源认证</strong>。其数据包结构如下：</p>
+
+
+<p>以下是其字段介绍：</p>
+<p>（1） 安全参数索引（SPI）</p>
+<p>​    一个32比特的字段，用来标识处理数据包的安全关联（Security Association），其内容后面会分析。</p>
+<p>（2）序列号（SN）</p>
+<p>​    一个单调增长的序号，用来标识一个ESP数据包。接收方通过序列号来防止重放攻击。</p>
+<p>（3）初始化向量（Initialization Vector）</p>
+<p>​    是在一种叫做CBC的加密方式中会用到的一个变量。CBC这种加密方式是为了防止相同的数据加密后的密文也一样这样的情况，因此在加密的时候会添加一个随机种子，这样相同的数据加密后因为随机种子不一样而导致加密结果也不一样。而这个随机种子就是初始化向量。当然IPSec VPN也可以选择不加密，如果不加密就不存在IV字段。所以在图中有两个ESP包结构示意图，左边白底的ESP包没有IV字段表示不加密，右边深色底的存在IV字段则表示要加密。</p>
+<p>（4）负载数据（Payload Data）</p>
+<p>​    负载数据就是IPSec加密所保护的数据，它很有可能就是TCP头部加相应的应用层数据。当然封装模式的不同会影响负载数据的内容。</p>
+<p>（5）垫片（Padding）</p>
+<p>​    CBC的块加密方式中，如果数据不满一个块，则需要进行补齐，追加的补齐块边界的数据就叫做垫片。如果不加密就不存在垫片字段。</p>
+<p>（6）垫片长度（Pad Length）</p>
+<p>​    顾名思义</p>
+<p>（7）下一个头部（Next Header）</p>
+<p>​    下一个头部表示IPSec封装负载数据里面的下一个头部，如果是传输模式，下一个头部就是传输层的头部；如果是隧道模式，下一个头部肯定是IP头</p>
+<p>（8）认证数据（Authentication Data）</p>
+<p>​    ESP会对从ESP头部到ESP尾部的所有数据进行验证，也就是做HMAC的散列计算，得到的散列值就会被放到认证数据部分，接收方可以通过这个认证数据部分对ESP数据包进行完整性和源认证的校验，这个后面会讲。</p>
+<p><strong>AH（Authentication Header）协议：</strong></p>
+<p>​    AH协议的IP协议号为51，AH能够为数据提供完整性和源认证两个方面的安全服务，并且抵御重放攻击。AH并不能为数据提供加密服务，所以在实际部署IPSecVPN的时候很少使用AH。</p>
+
+
+<p>从图中我们可以看出AH和ESP的关键性区别，即AH对数据验证的范围更广，不仅包含原始数据，还包含了原始IP头部，AH认证头部的名称就由此而得名。</p>
+
+
+<p>虽然AH要验证原始IP头部，但并不是IP头部的每一个字段都要进行完整性验证。在图中，灰色部分字段就是AH不进行验证的范围。也就是说，AH只会对剩余的白的部分字段进行完整性校验。可以看到IP地址字段是需要验证的，因而不能被修改。AH这么选择也有它自身的原因。IPSec的AH封装最初是为IPv6设计的。而在IPv6的网络中，地址不改变非常正常，但是我们现在使用的主要是IPv4的网络，网络地址转换技术经常被采用。一旦AH封装的数据包穿越NAT，地址就会改变，抵达目的地之后就不能通过验证，所以这也是AH现在没有得到大量部署的第二大原因。</p>
+<p>​    好了，封装协议介绍完之后，我们又回到我们封装模式之一的隧道模式中，以下是隧道模式的封装示意图：</p>
+
+
+<p>隧道模式把原始IP数据包整个封装到了一个新的IP数据包中，并且在新IP头部和原始IP头部中间插入了ESP头部，以此对整个原始IP数据包进行了加密和验证处理。</p>
+<p>​    下图是一个典型的利用隧道模式的IPSec VPN示意图，分支站点身后保护的网络为10.1.1.0/24，中心站点身后保护的网络是10.1.2.0/24。分支站点有一台终端电脑要通过站点到站点的IPSec VPN来访问中心站点的数据库服务器。这两台电脑就是我们所说的通信点。真正对数据进行加密的设备是两个站点连接互联网的路由器（或者防火墙等），假设分支站点路由器获取的互联网地址为202.100.1.1，中心站点的互联网地址是61.128.1.1。那么路由器的这两个地址就是加密点。封装后在互联网上传输的IPSec数据包如图中所示，最外层头部为加密点源和目的IP头部，紧接着是ESP头部，最内层为被安全保护的原始IP数据包。</p>
+
+
+<p>IPSec的另一种封装模式为传输模式，这种模式不能用于建立隧道，因为它和隧道模式的区别是，传输模式将IPSec头部（ESP/AH）封装到原始IP头部的后面，这就导致如果原始的IP地址如果是私有地址则无法在公网是传输的情况，因此传输模式只适用于传输点和加密点是同一个设备的情况。</p>
+<h4 id="2、加密传输"><a href="#2、加密传输" class="headerlink" title="2、加密传输"></a>2、加密传输</h4><p>​    加密算法可以分为两大类：对称加密算法和非对称加密算法。</p>
+<p>（1）对称加密</p>
+<p>​    优点：速度快、安全、紧凑</p>
+<p>​    缺点：明文传输共享密钥，容易出现中途劫持和窃听的问题；随着参与者数量的增加，密钥数量急剧膨胀(n*(n-1)/2)；不支持数字签名和不可否认性。</p>
+<p>​    对称加密的主流协议：DES,3DES,AES,RC4</p>
+<p>​    其中需要简单介绍一下DES的两种块加密方式：电子代码本（Electronic Code Book，ECB）和密码块链接（Cipher Block Chaining，CBC）。对于ECB这种加密方式来说，所有的块都是使用相同的DES密钥进行加密的。这种加密方式有一个问题，就是相同的块加密后的结果是一样的。虽然中间截获数据的攻击者不能解密数据，但是他至少知道通信的双方正在反复加密相同的数据包。为了解决这个问题，CBC技术孕育而生。使用CBC技术加密数据包，会随机产生一个明文的初始化向量（IV）字段，这个也就是前面第3小结介绍的那个IV，这个IV字段会和第一个明文块进行异或操作，然后使用DES算法进行对结果进行加密，因此相同的明文也会得到不同的密文。</p>
+<p>（2）非对称加密</p>
+<p>​    优点：安全，因为不用担心公钥被劫持；密钥数目和参与者数目相同；在交换公钥之前不需要预先建立某种信任关系；支持数字签名和不可否认性</p>
+<p>​    缺点：加密速度很慢；密文会边长；</p>
+<p>​    非对称加密算法的主流协议：RSA,DH,ECC(椭圆曲线算法)</p>
+<p>由于对称和非对称加密的这种特性，目前主流的加密方式都是采用对称和非对称结合的方式。即利用非对称加密的方法来加密和传输对称加密算法的密钥，利用对称加密来加密实际传输的数据。这样，各自的优点得以发挥，而缺点却被有效避免。当然这里面会涉及到一个密钥有效期的参数，为了保证安全，密钥需要定时进行更新，而这个有效期在IPSec中是可以进行协商的。</p>
+<h4 id="3、散列算法"><a href="#3、散列算法" class="headerlink" title="3、散列算法"></a>3、散列算法</h4><p>​    散列算法我们都已经很熟悉了，就不过多进行解释。其主要用来保证数据不会遭到篡改，因为只要数据发生篡改，计算出来的散列值就会发生改变。主要的散列算法是MD5和SHA-1</p>
+<h4 id="4、认证技术"><a href="#4、认证技术" class="headerlink" title="4、认证技术"></a>4、认证技术</h4><p>​    在IPSec中的认证方式有两种，一种是预共享密钥认证，另一种是证书认证。预共享密钥认证即是在双边设置相同的密钥进行认证。而证书认证则是利用了非对称加密中的数字签名功能进行认证。</p>
+<p>前面的内容描述了IPSec为了解决我们提出的问题所采用的技术，但是还有一个很重要的问题是，IPSec到底是怎么建立起Site与Site之间的对应关系的？他们是怎么协商要使用的具体协议的？如何保证我们的协商过程也是可靠的呢？这就需要介绍一下IPSec中很重要的一个协议，即是互联网密钥交换协议IKE（Internet Key Exchange）</p>
+<h4 id="5、IKE协议"><a href="#5、IKE协议" class="headerlink" title="5、IKE协议"></a>5、IKE协议</h4><p>​    IPSec中具体进行协商任务的协议叫做互联网密钥交换协议IKE。IKE主要完成如下3个方面的任务：</p>
+<p>​        对建立IPSec的双方进行认证（需要预先协商认证方式）；</p>
+<p>​        通过密钥交换，产生用于加密和HMAC的随机密钥；</p>
+<p>​        协商协议参数（加密协议、散列函数、封装协议、封装模式和密钥有效期）</p>
+<p>​    协商完成后的结果就叫做安全关联SA，也可以说IKE建立了安全关联。SA一共有两种类型，一种叫IKE SA，另一种叫做IPSec SA。IKE SA维护了安全防护（加密协议、散列函数、认证方式、密钥有效期）IKE协议的细节。IPSec SA则维护了安全防护实际用户流量（通信点之间流量）的细节。</p>
+<p>​    IKE由三个协议组成，如下图所示：</p>
+
+
+<p>​    SKEME决定了IKE的密钥交换方式，IKE主要使用DH来实现密钥交换。</p>
+<p>​    Oakley决定了IPSec的框架设计，让IPSec能够支持更多的协议。</p>
+<p>​    ISAKMP是IKE的本质协议，它决定了IKE协商包的封装格式，交换过程和模式的切换。</p>
+<p>（1）IKE 与ISAKMP</p>
+<p>​    ISAKMP是IKE的核心协议，所以我们经常会把IKE与ISAKMP这两个术语互换使用。例如，IKE SA也经常被说成ISAKMP SA。在配置IPSec VPN的时候，主要的配置内容也是ISAKMP。另外，SKEME和Oakley没有任何相关的配置内容，因此很多网络技术人员常常会认为IKE和ISAKMP是相同的概念。如果一定要对IKE和ISAKMP进行区分的话，那么由于SKEME的存在，因此IKE能够决定密钥交换的方式，但是ISAKMP只能够为密钥交换来交换数据包，但却不能决定密钥交换的方式。</p>
+<p>（2） IKE的2个阶段和3个模式</p>
+<p>​    下图是IKE协商示意图，从该图中，我们可以看到IKE协商分为两个不同阶段：第一阶段和第二阶段。第一阶段协商分别可以使用6个包交换的主模式或者3个包交换的主动模式来完成，第一阶段协商的主要目的就是对建立IPSec的双方进行认证，以确保只有合法的对等体（peer）才能够建立IPSec VPN。协商得到的结果就是IKE SA。第二个阶段总是使用3个包交换的快速模式来完成，第二阶段的主要目的就是根据需要加密的实际流量（感兴趣流），来协商保护这些流量的策略。协商的结果就是IPSec SA。</p>
+
+
+<p>​    我们对这一过程做一个简单的比喻：IKE协商过程就像两个公司做生意的过程。两个公司在具体合作之前需要相互了解，最简单的方法可能就是核查对方公司的工商牌照、公司营业和信誉状况。也很有可能是约一个地点，坐下来面对面地进行介绍和了解。不管怎么样，目的就是相互进行认证，建立基本的信任关系。这个过程其实就是IKE第一个阶段需要完成的任务。第一阶段完成后，信任关系建立了，相应的IKE SA也就建立了。紧接着的主要任务就是基于具体的项目来签订合同。对于IPSec VPN而言，具体的项目就是安全保护通信点之间的流量，具体处理这些流量的策略（IPSec SA）就是合同。IKE第二阶段的任务就是基于需要被加密的流量（A到B）协商相应的IPSec SA。一旦双方在第一阶段建立起了信任关系，他们就没有必要进行重复的认证了。接下来，双方的议题就是根据第一阶段建立的IKE SA，给两个站点之间的很多需要被加密的流量协商不同的第二阶段策略（IPSec SA）</p>
+<p>​    现在我们回头说说第一阶段的两种模式。既然第一阶段既可以使用主模式，也可以使用主动模式来完成，那么什么情况下应该使用主模式，什么情况应该使用主动模式呢？以Cisco 的IPSec VPN为例，只有在一种情况下，第一阶段才会使用3个数据包交换的主动模式来完成，这就是通过预共享密钥认证的远程访问VPN，换言之，使用证书认证的EzVPN也是通过6个数据包的主模式来完成的。现在我们重要介绍一下主模式6个数据包和快速模式3个数据包，这9个数据包的交换细节。</p>
+<p>​    1）主模式IKE 1-2包交换</p>
+<p>​    下图为主模式IKE 1-2包交换过程：</p>
+
+
+<p>​    主模式一共要交换6个ISAKMP数据包，这个过程可以分为1-2、3-4和5-6这3次数据包交换。主模式数据包1-2交换主要负责完成2个任务：第一是通过核对收到的ISAKMP数据包的源IP地址，来确认收到的ISAKMP数据包是否源自合法的对等体；第二个任务就是协商IKE策略。</p>
+<p>​    我们先来讨论一下第一个任务的操作过程，假设站点一（互联网IP地址202.100.1.1）和站点二（互联网IP地址61.128.1.1）之间需要建立IPSec VPN，站点一配置对等体为61.128.1.1，站点二配置对等体为202.100.1.1。于是，当站点二收到第一个ISAKMP的数据包，它就会查看这个ISAKMP数据包的源IP地址，如果这个源IP地址是202.100.1.1，它就接收这个包，反之则终止整个协商过程，因为站点二并不希望和这个对等体建立IPSec VPN。</p>
+<p>​    由于这个IP地址出现在IP头部，并不是ISAKMP数据的内容，所以在图中并没有被体现出来。顺便再说明一个问题，ISAKMP数据包是使用UDP进行传输的，源端口号和目的端口号都是500。</p>
+<p>​    在IKE1-2个包交换的过程中，IKE策略协商才是它的主要任务，策略包含如下5项内容：加密策略；散列函数；DH组；认证方式；密钥有效期。</p>
+<p>​    既然叫IKE策略，表示它是对IKE数据包进行处理的策略。以加密策略为例，它决定了加密主模式（MM）的5-6个数据包和快速模式（QM）的1-3个数据包的策略。但是这个策略绝对不是用于加密实际通信点之间流量（Cisco也将通信点之间的流量成为感兴趣流）的策略。通信的双方会在第二阶段的快速模式中协商另外一个加密策略，二这个在快速模式中协商的策略才会用于处理感兴趣流。在第一个数据包内，发起方会把本地配置的所有策略一起发送给接收方，有接收方从中挑选出了一个可以接受的策略。并且通过第二个IKE包回送给发送方，向发送方指名它所选择的那个策略。</p>
+<p>​    下图详细地介绍了接收方选择策略的顺序，接收方首先用本地优先的策略（Policy 10）来检查对方发送过来的全部策略。如果不匹配就由下一个优先的策略来检查，直到找到一个匹配的策略为止。很明显，图中所示的IKE 1-2包交换，协商得到了如下的IKE策略：</p>
+<p>​    加密策略为DES; 散列函数为MD5；DH组为1；认证方式为预共享密钥；密钥有效期为1天。</p>
+
+
+<p>​    有了这些结果，在交换后续IKE3-4和5-6包时，就可以使用这套策略来处理了。</p>
+<p>​    2） 主模式IKE 3-4 包交换</p>
+<p>​    下图为主模式IKE 3-4包交换过程：</p>
+
+
+<p>​    IKE 1-2包交换已经协商出了IKE策略，但是指望使用这些加密策略和散列函数来保护IKE数据还缺少一个重要的内容–密钥。加密和HMAC都需要密钥，这个密钥从何而来？它会从下图所示的DH交换中产生：</p>
+
+
+<p>​    DH是一种非对称密钥算法，这个算法基于一个知名的单向函数，离散对数函数</p>
+<p>​    A = g^a mod p</p>
+<p>​    此函数的特点是在g和p很大的情况下，已知a求A很容易，但是已知A求a几乎不可能。因此，发起方（Alice）首先随机产生g、p、a。g和p的大小由1-2包交换的DH组大小来决定，DH组1表示为768位长度，DH组2表示1024位长度，组越大表示DH交换的强度越大。然后发起方使用离散对数函数计算得出A。并且在第3个IKE包中把g、p、A发送给接收方（Bob）。接收方（Bob）收到后，随机产生小b，并且使用从第3个IKE包中接收到的g和p，通过离散对数函数计算得到B，然后通过第4个IKE包把B回送给发起方（Alice）。现在DH算法的神奇之处就要体现了，接收方（Bob）通过A^b mod p得到的结果，等于发起方（Alice）通过B^a mod p计算得到的结果，也等于g^ab mod p 。这样收发双方就通过DH算法得到了一个共享密钥g^ab mod p 。这个值中间人是无法计算得出的，因为要计算这个值需要至少一方的私有信息（a或者b），但是中间人只是能够截获（g、p、A、B），并且不能通过A和B计算得出a和b（离散对数特点）。有了这个共享密钥后，我们可以通过一系列的密钥衍生算法，得到机密和HMAC处理IKE信息的密钥。加密感兴趣流的密钥也是从这个共享密钥衍生而来，可以说它是所有密钥的始祖。</p>
+<p>​    3）主模式数据包5-6的交换</p>
+<p>​    下图是主模式数据包5-6的交换过程：</p>
+
+
+<p>​    IKE第一阶段的主要任务就是认证，IKE 5-6包交换就是在安全环境下进行认证（从IKE主模式的第5-6 包开始往后，都使用IKE 1-2 包交换所协商的加密与HMAC算法进行安全保护），上图所示为IKE 5-6包交换的示意图。前面我们学习的IKE 1-2和3-4包交换，只是在为IKE5-6包交换的认证做铺垫。IKE 1-2包交换为认证准备好策略，IKE 3-4包交换为保护IKE5-6包的安全算法提供密钥资源。</p>
+<p>​    IPSecVPN的认证方式有3个，分别是预共享密钥认证、证书认证和RSA加密随机数认证。本章只重点介绍预共享密钥认证。预共享密钥认证顾名思义就是需要在收发双方预先配置一个相同的共享密钥，认证的时候互相交换由这个共享密钥所制造的散列值来实现认证。</p>
+<p>​    下图所示为预共享密钥认证的示意图：</p>
+
+
+<p>​    步骤1：发起方根据接收方IP地址查询本地IPSec配置，找到与其对应的预共享密钥。</p>
+<p>​    步骤2：发起方把预共享秘密和IKE策略内容、DH计算的密钥资源、还有其他一些接收双方都知道的内容一起进行散列计算，得到的结果就是“认证散列值”。</p>
+<p>​    步骤3：发起方把“认证散列值”和本地加密点IP地址放入第5个IKE数据包中，加密后发送给接收方。</p>
+<p>​    步骤4：接收方首先对收到的第5个IKE数据包进行解密，提取出发起方的IP地址，并且基于发起方的IP地址查询本地IPSec配置，找出对应的预共享秘密。</p>
+<p>​    步骤5：接收方把查询到的共享秘密，和其他双方已知内容一起计算散列值，得到”认证散列值”.</p>
+<p>​    步骤6：接收方把从第5个IKE数据包中提取出来的”认证散列值“和步骤5计算得到的”认证散列值“进行比较，如果相等，接收方就成功认证了发起方。当然接收方还要通过相同的办法来发送第6个IKE数据包，让发起方认证接收方。</p>
+<p>​    4）第一阶段小结</p>
+<p>​    第一阶段的主要任务就是相互认证。第一阶段完成，不仅表示收发双方认证通过，并且还会建立一个双向的ISAKMP/IKE安全关联SA，这个SA维护了ISAKMP/IKE流量的相关策略（注意：这些策略不会处理实际感兴趣流），而对等体双方还会继续使用这个SA，来安全保护后续的IKE快速模式1-3包交换。</p>
+<p>​    5）快速模式 数据包1-3的交换</p>
+
+
+<p>​    上图所示为IKE快速模式1-3包交换示意图。在快速模式中，1-3包交换的主要目的就是在安全的环境下，基于感兴趣流协商处理这个感兴趣流的IPSec策略，这些策略包含以下6项内容：</p>
+<p>​    感兴趣流；加密策略；散列函数；封装协议；封装模式；密钥有效期。</p>
+<p>​    在IKE快速模式的第一个数据包中，发起方会把感兴趣流相关的IPSec策略一起发送给接收方，并由接收方来选择适当的策略。这个过程与在IKE主模式1-2包交换时，有接收方来选择策略的工作方式相同。</p>
+<p>​    策略协商完毕之后就会产生相应的IPSec SA，我们发现在IKE快速第2个和第3个数据包中都出现了安全参数索引（SPI）这个字段，这个字段的作用我们在之前介绍过。简单地说，SPI是一个字串，用于唯一标识一个IPSec SA。还要注意的一点是，第一阶段协商的IKE SA是一个双向的SA，但是第二阶段协商的IPSec SA则是一个单向的SA，也就是存在一个IPSec SA用于保护发起方到接收方的流量，标识这个IPSec SA的SPI出现在快速模式的第二个数据包中。还存在另外一个IPSec SA用来保护接收方到发起方的流量，而标识这个IPSec SA的SPI出现在快速模式的最后一个数据包。其实我们还可以这样来看这个问题，那就是目的设备决定了SPI值。因为发起方到接收方IPSec SA的SPI是由接收方产生，并通过第二个包发送给发起方的，因此目的设备决定了SPI的说法就很容易理解了。</p>
+<p>​    6）第二阶段小结</p>
+<p>​    第二阶段的主要任务就是基于具体的感兴趣流来协商相应的IPSec SA，IKE快速模式交换的三个数据包都得到了安全保护。另外值得注意的内容是SPI。SPI用于唯一标识一个单向的IPSec SA，SPI的值是由目的设备决定的。</p>
+<h3 id="四、总结"><a href="#四、总结" class="headerlink" title="四、总结"></a>四、总结</h3><p>​    总结来看，以上讲的如此多的技术都是为了达到我们最初的目的，以及为了到达这样的目的而解决我们所遇到的问题。</p>
+<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><p>秦柯. Cisco IPSec VPN实战指南（异步图书） (p. 1). 人民邮电出版社. Kindle 版本. </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/技术类/" rel="tag"># 技术类</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/20/centos7登录只启动浏览器/" rel="next" title="centos7登录只启动浏览器">
+                <i class="fa fa-chevron-left"></i> centos7登录只启动浏览器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/26/HTTPS浅析/" rel="prev" title="HTTPS浅析">
+                HTTPS浅析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、提出问题"><span class="nav-number">1.</span> <span class="nav-text">一、提出问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、解决方案"><span class="nav-number">2.</span> <span class="nav-text">二、解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#站点到站点（Site-to-Site）（公司-分公司）"><span class="nav-number">2.1.</span> <span class="nav-text">站点到站点（Site to Site）（公司-分公司）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-远程访问（Remote-Access）（客户-公司）"><span class="nav-number">2.2.</span> <span class="nav-text">2. 远程访问（Remote Access）（客户-公司）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、IPSec-VPN技术实现"><span class="nav-number">3.</span> <span class="nav-text">三、IPSec  VPN技术实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、隧道技术"><span class="nav-number">3.1.</span> <span class="nav-text">1、隧道技术</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2、加密传输"><span class="nav-number">3.2.</span> <span class="nav-text">2、加密传输</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3、散列算法"><span class="nav-number">3.3.</span> <span class="nav-text">3、散列算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4、认证技术"><span class="nav-number">3.4.</span> <span class="nav-text">4、认证技术</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5、IKE协议"><span class="nav-number">3.5.</span> <span class="nav-text">5、IKE协议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四、总结"><span class="nav-number">4.</span> <span class="nav-text">四、总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文献"><span class="nav-number">5.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
